@@ -1,3 +1,4 @@
+
 <div align="center">
 
 # 📐 CCR Quant Risk
@@ -7,7 +8,6 @@
 **Exposure · Probability · Simulation · Strategy · Decision Support**
 
 [![Live Dashboard](https://img.shields.io/badge/🚀_Launch_Live_Demo-2563eb?style=for-the-badge&logo=render&logoColor=white)](https://ccr-game-theory-risk-h5.streamlit.app//)
-
 [![Python](https://img.shields.io/badge/Python-3.10+-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://python.org)
 [![Streamlit](https://img.shields.io/badge/Streamlit-1.x-FF4B4B?style=for-the-badge&logo=streamlit&logoColor=white)](https://streamlit.io)
 [![FastAPI](https://img.shields.io/badge/FastAPI-Backend-009688?style=for-the-badge&logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com)
@@ -58,7 +58,7 @@
 
 **Counterparty Credit Risk (CCR)** is the risk that a counterparty to a financial contract fails to meet its obligations before the contract settles.
 
-Traditional monitoring focuses on **current exposure** — $EAD_t$ — but this leaves critical questions unanswered:
+Traditional monitoring focuses on **current exposure** — EAD_t — but this leaves critical questions unanswered:
 
 <table>
 <tr>
@@ -102,7 +102,7 @@ Two counterparties can share the same **current exposure** but have radically di
 | **A** | £5M | **45%** | **8%** | 🟢 Comfortable headroom |
 | **B** | £5M | **85%** | **42%** | 🔴 Elevated forward risk |
 
-> **Key insight:** $\text{Current Exposure} \neq \text{Future Risk}$
+> **Key insight:** `Current Exposure ≠ Future Risk`
 
 This platform bridges that gap by combining **current state** with **forward-looking probability, dynamics, and strategy**.
 
@@ -115,35 +115,47 @@ This platform bridges that gap by combining **current state** with **forward-loo
 ```mermaid
 flowchart TD
     A[📥 Trade Data<br/>Notional · MTM · Collateral] --> B[💷 Exposure Engine]
-    B --> B1[Replacement Cost<br/>RC = max MTM − Collateral, 0]
-    B --> B2[Potential Future Exposure<br/>PFE = N × AddOn × min 1, √T]
-    B --> B3[Exposure at Default<br/>EAD = 1.4 × RC + PFE]
-    B1 & B2 --> B3
+    B --> B1[Replacement Cost<br/>RC = max MTM - Collateral, 0]
+    B --> B2[Potential Future Exposure<br/>PFE = N x AddOn x min 1, sqrt T]
+    B --> B3[Exposure at Default<br/>EAD = 1.4 x RC + PFE]
+    B1 --> B3
+    B2 --> B3
 
     B3 --> C[🔬 Feature Engineering]
     C --> C1[Limit Utilisation]
     C --> C2[EAD Change]
     C --> C3[Market Volatility]
-    C --> C4[Credit Spread Δ]
+    C --> C4[Credit Spread Delta]
     C --> C5[Collateral Coverage]
 
-    C1 & C2 & C3 & C4 & C5 --> D[📊 Statistical Risk Layer]
+    C1 --> D[📊 Statistical Risk Layer]
+    C2 --> D
+    C3 --> D
+    C4 --> D
+    C5 --> D
     D --> D1[Anomaly Detection]
     D --> D2[Behavioural Probabilities<br/>Multinomial Logistic]
     D --> D3[Markov Transitions]
 
-    D1 & D2 & D3 --> E[🔮 Forward Risk Layer]
+    D1 --> E[🔮 Forward Risk Layer]
+    D2 --> E
+    D3 --> E
     E --> E1[Monte Carlo Simulation]
     E --> E2[P95 / P99 Tail Exposure]
     E --> E3[Stress Testing]
     E --> E4[Reverse Stress]
 
-    E1 & E2 & E3 & E4 --> F[🎲 Strategic Decision Layer]
+    E1 --> F[🎲 Strategic Decision Layer]
+    E2 --> F
+    E3 --> F
+    E4 --> F
     F --> F1[Expected Utility]
     F --> F2[Nash Equilibrium]
     F --> F3[Value of Perfect Info]
 
-    F1 & F2 & F3 --> G[🚨 Early Warning Engine]
+    F1 --> G[🚨 Early Warning Engine]
+    F2 --> G
+    F3 --> G
     G --> H[🔌 FastAPI Risk API]
     H --> I[📈 Streamlit Dashboard]
     I --> J[🤖 AI Stakeholder Layer<br/>Groq · gpt-oss-120b]
@@ -185,26 +197,25 @@ flowchart LR
 
 The system uses a simplified **SA-CCR-inspired** exposure model:
 
-$$
-\boxed{EAD = \alpha \cdot (RC + PFE)}, \quad \alpha = 1.4
-$$
+```
+EAD = α · (RC + PFE),   α = 1.4
+```
 
 <details>
 <summary><b>📐 Replacement Cost (RC)</b></summary>
 
 Current positive exposure of a trade:
 
-$$
-RC = \max(MTM - Collateral, 0) \quad \text{(margined)}
-$$
+```
+RC = max(MTM - Collateral, 0)     (margined)
+RC = max(MTM, 0)                  (unmargined)
+```
 
-$$
-RC = \max(MTM, 0) \quad \text{(unmargined)}
-$$
+**Example:** MTM = £2M, Collateral = £0.5M
 
-**Example:** $MTM = £2M$, $Collateral = £0.5M$
-
-$$RC = \max(2 - 0.5, 0) = £1.5M$$
+```
+RC = max(2 - 0.5, 0) = £1.5M
+```
 
 > The max-with-zero prevents negative MTM from producing positive current exposure.
 
@@ -215,13 +226,15 @@ $$RC = \max(2 - 0.5, 0) = £1.5M$$
 
 Forward-looking exposure using notional and maturity:
 
-$$
-PFE = Notional \times AddOnFactor \times \min(1, \sqrt{T})
-$$
+```
+PFE = Notional × AddOnFactor × min(1, √T)
+```
 
-**Example:** $Notional = £10M$, $AddOn = 5\%$, $T = 0.25$
+**Example:** Notional = £10M, AddOn = 5%, T = 0.25
 
-$$PFE = 10 \times 0.05 \times \sqrt{0.25} = £0.25M$$
+```
+PFE = 10 × 0.05 × √0.25 = £0.25M
+```
 
 </details>
 
@@ -230,15 +243,17 @@ $$PFE = 10 \times 0.05 \times \sqrt{0.25} = £0.25M$$
 
 Combining RC and PFE:
 
-$$EAD = 1.4 \times (1.5 + 0.25) = £2.45M$$
+```
+EAD = 1.4 × (1.5 + 0.25) = £2.45M
+```
 
 </details>
 
 ### 2. Limit Utilisation
 
-$$
-U = \frac{EAD}{Credit\ Limit}
-$$
+```
+U = EAD / Credit Limit
+```
 
 | Utilisation | Interpretation |
 |:---:|---|
@@ -249,45 +264,44 @@ $$
 
 ### 3. Behavioural Probability (Multinomial Logistic)
 
-$$
-P(Y = k \mid X) = \frac{e^{\beta_k^T X}}{\sum_j e^{\beta_j^T X}}
-$$
+```
+P(Y = k | X) = exp(β_k^T · X) / Σ_j exp(β_j^T · X)
+```
 
 > **Interpretation:** If the model outputs `Stress = 0.45`, it means *"under these features and assumptions, Stress is the highest-probability behavioural state"* — **not** *"the counterparty will definitely become stressed."*
 
 ### 4. Markov Chain Transitions
 
-$$
-P(S_{t+1} \mid S_t, S_{t-1}, \ldots) \approx P(S_{t+1} \mid S_t)
-$$
+```
+P(S_{t+1} | S_t, S_{t-1}, ...) ≈ P(S_{t+1} | S_t)
+```
 
 **Example transition matrix:**
 
-$$
-P = \begin{bmatrix}
-0.80 & 0.15 & 0.05 \\
-0.20 & 0.60 & 0.20 \\
-0.05 & 0.25 & 0.70
-\end{bmatrix}
-$$
+```
+        Normal  Watch  Stress
+Normal [ 0.80   0.15   0.05 ]
+Watch  [ 0.20   0.60   0.20 ]
+Stress [ 0.05   0.25   0.70 ]
+```
 
 Rows = **today's** state, Columns = **tomorrow's** state.
 
-$P(\text{Stress}_{t+1} \mid \text{Stress}_t) = 0.70$ → **70% probability of staying stressed**.
+`P(Stress_{t+1} | Stress_t) = 0.70` → **70% probability of staying stressed**.
 
 ### 5. Stationary Distribution
 
-$$
-\pi P = \pi, \quad \sum_i \pi_i = 1
-$$
+```
+πP = π,   Σ_i π_i = 1
+```
 
 Represents the long-run proportion of time in each state under current dynamics.
 
 ### 6. Monte Carlo Simulation
 
-$$
-X_{t + \Delta t} = X_t + \mu \Delta t + \sigma \sqrt{\Delta t} \cdot Z, \quad Z \sim N(0,1)
-$$
+```
+X_{t+Δt} = X_t + μ·Δt + σ·√Δt · Z,    Z ~ N(0,1)
+```
 
 Generates **N** exposure paths → distribution → tail quantiles.
 
@@ -300,7 +314,7 @@ Generates **N** exposure paths → distribution → tail quantiles.
 
 **Example:**
 
-```text
+```
 Current EAD  = £10M
 P95 Peak EAD = £14M   →  P(Peak > £14M) ≈ 5%
 P99 Peak EAD = £18M   →  P(Peak > £18M) ≈ 1%
@@ -308,49 +322,47 @@ P99 Peak EAD = £18M   →  P(Peak > £18M) ≈ 1%
 
 ### 8. Expected Utility
 
-$$
-EU(a) = \sum_s P(s) \cdot U(a, s)
-$$
+```
+EU(a) = Σ_s P(s) · U(a, s)
+```
 
-For probabilities $P(N)=0.20$, $P(W)=0.35$, $P(S)=0.45$:
+For probabilities P(N)=0.20, P(W)=0.35, P(S)=0.45:
 
-$$
-EU(a) = 0.20 U(a,N) + 0.35 U(a,W) + 0.45 U(a,S)
-$$
+```
+EU(a) = 0.20·U(a,N) + 0.35·U(a,W) + 0.45·U(a,S)
+```
 
 ### 9. Nash Equilibrium
 
 Neither player can improve payoff by unilateral deviation:
 
-$$
-U_B(a^*, b^*) \geq U_B(a, b^*) \quad \forall a
-$$
-
-$$
-U_C(a^*, b^*) \geq U_C(a^*, b) \quad \forall b
-$$
+```
+U_B(a*, b*) ≥ U_B(a, b*)    ∀a
+U_C(a*, b*) ≥ U_C(a*, b)    ∀b
+```
 
 ### 10. Value of Perfect Information (VOI)
 
-$$
-VOI = EU_{perfect} - EU_{current}
-$$
+```
+VOI = EU_perfect - EU_current
+```
 
 where:
 
-$$
-EU_{perfect} = \sum_s P(s) \max_a U(a, s), \quad EU_{current} = \max_a \sum_s P(s) U(a, s)
-$$
+```
+EU_perfect = Σ_s P(s) · max_a U(a, s)
+EU_current = max_a Σ_s P(s) · U(a, s)
+```
 
 > **Business meaning:** VOI quantifies the **decision value of reducing uncertainty**. High VOI → additional information could materially change the recommendation.
 
 ### 11. Early Warning Score
 
-$$
-Score = w_1 A + w_2 U + w_3 T + w_4 S
-$$
+```
+Score = w₁A + w₂U + w₃T + w₄S
+```
 
-where $A$ = anomaly, $U$ = utilisation, $T$ = exposure trend, $S$ = spread signal.
+where A = anomaly, U = utilisation, T = exposure trend, S = spread signal.
 
 ---
 
@@ -385,7 +397,7 @@ flowchart LR
 | **Counterparties** | Number of entities in the book |
 | **Anomalies** | Statistically unusual observations |
 | **Trades** | Total trade population |
-| **Mean Utilisation** | Average $EAD / Limit$ across the book |
+| **Mean Utilisation** | Average EAD / Limit across the book |
 
 **Portfolio takeaway** panel provides an executive summary via `interpret_overview()`.
 
@@ -410,7 +422,7 @@ flowchart LR
 
 **Interpretation sequence:**
 
-```text
+```
 What does the model think the counterparty may do?
                 ↓
 What does that imply for each bank action?
@@ -432,7 +444,7 @@ How sensitive is the decision to uncertainty?
 
 **Focus on:** breach probability distribution, P95/P99 peak EAD scatter, top-10 tail contributors.
 
-**Core idea:** $\text{Tail Exposure} > \text{Typical Exposure}$
+**Core idea:** `Tail Exposure > Typical Exposure`
 
 </details>
 
@@ -440,9 +452,12 @@ How sensitive is the decision to uncertainty?
 <summary><b>📌 Stress Testing Tab</b> — What if adverse conditions occur?</summary>
 
 **Compare:**
-$$\Delta EAD = EAD_{stress} - EAD_{base}$$
 
-**Also examine:** $N_{over\ limit}$ — how many counterparties breach limits under each shock.
+```
+ΔEAD = EAD_stress - EAD_base
+```
+
+**Also examine:** `N_overlimit` — how many counterparties breach limits under each shock.
 
 </details>
 
@@ -451,7 +466,7 @@ $$\Delta EAD = EAD_{stress} - EAD_{base}$$
 
 **Heatmap:** rows = yesterday, columns = today. Strong diagonal = sticky states.
 
-**Stationary mix:** long-run distribution via $\pi P = \pi$.
+**Stationary mix:** long-run distribution via `πP = π`.
 
 </details>
 
@@ -460,7 +475,7 @@ $$\Delta EAD = EAD_{stress} - EAD_{base}$$
 
 Full mathematical risk profile:
 
-```text
+```
 Current EAD → Utilisation → Breach Prob → Behaviour Prob
      → Early Warning Drivers → Expected Utilities → Nash → VOI
 ```
@@ -489,8 +504,12 @@ flowchart LR
         C3[Stress]
     end
 
-    B1 & B2 & B3 --> M{{Payoff Matrix<br/>U_B a, b}}
-    C1 & C2 & C3 --> M
+    B1 --> M{{Payoff Matrix<br/>U_B a, b}}
+    B2 --> M
+    B3 --> M
+    C1 --> M
+    C2 --> M
+    C3 --> M
     M --> EU[Expected Utility]
     M --> NE[Nash Equilibrium]
     M --> VOI[Value of Perfect Info]
@@ -504,7 +523,7 @@ flowchart LR
 
 Sometimes the equilibrium is **probabilistic**:
 
-```text
+```
 Monitor  → 50%
 Hold     → 20%
 Reduce   → 30%
@@ -523,7 +542,10 @@ flowchart TD
     S --> P3[Path 3<br/>GBM simulation]
     S --> PN[Path N<br/>GBM simulation]
 
-    P1 & P2 & P3 & PN --> D[Distribution of Peak EAD]
+    P1 --> D[Distribution of Peak EAD]
+    P2 --> D
+    P3 --> D
+    PN --> D
     D --> Q95[P95 Peak EAD]
     D --> Q99[P99 Peak EAD]
     D --> ES[Expected Shortfall]
@@ -555,11 +577,11 @@ Instead of *"what happens if we shock by X?"*:
 
 > **"How large a shock would push the portfolio to a defined failure threshold?"**
 
-Find $x$ such that:
+Find `x` such that:
 
-$$
-Risk(x) \geq Threshold
-$$
+```
+Risk(x) ≥ Threshold
+```
 
 **Example output:** *"A 12% uniform shock pushes ~25% of the book over limit."*
 
@@ -596,10 +618,10 @@ Composite score combining four signals:
 
 | Weight | Signal | Meaning |
 |:---:|---|---|
-| $w_1$ | **Anomaly** | Statistical deviation from learned patterns |
-| $w_2$ | **Utilisation** | How close to credit limit |
-| $w_3$ | **Trend** | Direction of EAD change |
-| $w_4$ | **Spread** | Credit spread movement |
+| w₁ | **Anomaly** | Statistical deviation from learned patterns |
+| w₂ | **Utilisation** | How close to credit limit |
+| w₃ | **Trend** | Direction of EAD change |
+| w₄ | **Spread** | Credit spread movement |
 
 Maps into **Low / Moderate / High** bands for prioritisation.
 
@@ -739,7 +761,7 @@ Assumes state dynamics are captured by the estimated transition matrix.
 Results depend on distributions, correlations, volatility, horizon, and scenario design.
 
 ### 🎲 Game Theory
-$Nash = f(\text{Payoffs}, \text{Probabilities}, \text{Strategies})$
+`Nash = f(Payoffs, Probabilities, Strategies)`
 
 Changing payoffs changes the equilibrium.
 
@@ -920,25 +942,34 @@ flowchart TD
 
 ## 📐 Mathematical Summary Card
 
-$$
-\begin{aligned}
-&\text{Exposure:} &\quad RC &= \max(MTM - C, 0) \\
-& &\quad PFE &= N \cdot A \cdot \min(1, \sqrt{T}) \\
-& &\quad EAD &= 1.4(RC + PFE) \\[4pt]
-&\text{Utilisation:} &\quad U &= \frac{EAD}{L} \\[4pt]
-&\text{Behaviour:} &\quad P(Y=k|X) &= \frac{e^{\beta_k^T X}}{\sum_j e^{\beta_j^T X}} \\[4pt]
-&\text{Markov:} &\quad P_{ij} &= P(S_{t+1}=j \mid S_t=i) \\[4pt]
-&\text{Stationary:} &\quad \pi P &= \pi \\[4pt]
-&\text{Monte Carlo:} &\quad X_{t+\Delta t} &= X_t + \mu \Delta t + \sigma\sqrt{\Delta t} Z \\[4pt]
-&\text{Expected Utility:} &\quad EU(a) &= \sum_s P(s) U(a,s) \\[4pt]
-&\text{VOI:} &\quad VOI &= EU_{perfect} - EU_{current} \\[4pt]
-&\text{Early Warning:} &\quad Score &= w_1 A + w_2 U + w_3 T + w_4 S
-\end{aligned}
-$$
+```
+Exposure:          RC   = max(MTM - C, 0)
+                   PFE  = N · A · min(1, √T)
+                   EAD  = 1.4(RC + PFE)
 
-$$
-\boxed{\text{Exposure} \rightarrow \text{Probability} \rightarrow \text{Dynamics} \rightarrow \text{Simulation} \rightarrow \text{Strategy} \rightarrow \text{Early Warning} \rightarrow \text{Decision}}
-$$
+Utilisation:       U    = EAD / L
+
+Behaviour:         P(Y=k|X) = exp(β_k^T X) / Σ_j exp(β_j^T X)
+
+Markov:            P_ij = P(S_{t+1}=j | S_t=i)
+
+Stationary:        πP   = π
+
+Monte Carlo:       X_{t+Δt} = X_t + μΔt + σ√Δt · Z
+
+Expected Utility:  EU(a) = Σ_s P(s) · U(a,s)
+
+VOI:               VOI  = EU_perfect - EU_current
+
+Early Warning:     Score = w₁A + w₂U + w₃T + w₄S
+```
+
+```
+╔══════════════════════════════════════════════════════════════════════╗
+║  Exposure → Probability → Dynamics → Simulation → Strategy →         ║
+║  Early Warning → Decision                                            ║
+╚══════════════════════════════════════════════════════════════════════╝
+```
 
 ---
 
@@ -952,11 +983,12 @@ It asks:
 
 > **"What is the current exposure, how might it evolve, what could happen under uncertainty and stress, how does counterparty behaviour affect the decision, and where should risk management focus its attention?"**
 
-$$
-\boxed{
-\text{Current Exposure} \to \text{Future Risk} \to \text{Tail Risk} \to \text{Stress Risk} \to \text{Strategic Uncertainty} \to \text{Decision Support}
-}
-$$
+```
+╔══════════════════════════════════════════════════════════════════════╗
+║  Current Exposure → Future Risk → Tail Risk → Stress Risk →          ║
+║  Strategic Uncertainty → Decision Support                            ║
+╚══════════════════════════════════════════════════════════════════════╝
+```
 
 ---
 
@@ -982,7 +1014,7 @@ All model outputs should be interpreted within the assumptions, data, and parame
 
 ### 🚀 Try the Live Dashboard
 
-[![Launch](https://img.shields.io/badge/🚀_Launch_Live_Demo-2563eb?style=for-the-badge&logo=render&logoColor=white)](https://ccr-game-theory-risk-h5.streamlit.app//)
+[![Launch](https://img.shields.io/badge/🚀_Launch_Live_Demo-2563eb?style=for-the-badge&logo=render&logoColor=white)](https://ccr-game-theory-risk-1.onrender.com/)
 
 <br/>
 
