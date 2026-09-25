@@ -6,7 +6,7 @@
 
 **Exposure · Probability · Simulation · Strategy · Decision Support**
 
-[![Live Dashboard](https://img.shields.io/badge/🚀_Live_Demo-ccr--game--theory--risk-2563eb?style=for-the-badge)](https://ccr-game-theory-risk-h5.streamlit.app//)
+[CCR Quant Risk · Streamlit](https://ccr-game-theory-risk-h5.streamlit.app/)
 [![Python](https://img.shields.io/badge/Python-3.10+-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://python.org)
 [![Streamlit](https://img.shields.io/badge/Streamlit-1.x-FF4B4B?style=for-the-badge&logo=streamlit&logoColor=white)](https://streamlit.io)
 [![FastAPI](https://img.shields.io/badge/FastAPI-Backend-009688?style=for-the-badge&logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com)
@@ -19,7 +19,7 @@
 
 <br/>
 
-**[🚀 Launch Live Dashboard](https://ccr-game-theory-risk-1.onrender.com/)** · **[📖 Read the Maths](#-mathematical-foundations)** · **[🏗 Architecture](#-system-architecture)** · **[⚠️ Limitations](#-model-limitations)**
+[CCR Quant Risk · Streamlit](https://ccr-game-theory-risk-h5.streamlit.app/) · **[📖 Read the Maths](#-mathematical-foundations)** · **[🏗 Architecture](#-system-architecture)** · **[⚠️ Limitations](#-model-limitations)**
 
 </div>
 
@@ -322,11 +322,11 @@ $$
 Neither player can improve payoff by unilateral deviation:
 
 $$
-U_B(a^*, b^*) \geq U_B(a, b^*) \quad \forall a
+U_B(a^{*}, b^{*}) \geq U_B(a, b^{*}) \quad \forall a
 $$
 
 $$
-U_C(a^*, b^*) \geq U_C(a^*, b) \quad \forall b
+U_C(a^{*}, b^{*}) \geq U_C(a^{*}, b) \quad \forall b
 $$
 
 ### 10. Value of Perfect Information (VOI)
@@ -981,7 +981,7 @@ All model outputs should be interpreted within the assumptions, data, and parame
 
 ### 🚀 Try the Live Dashboard
 
-[![Launch](https://img.shields.io/badge/🚀_Launch_Live_Demo-2563eb?style=for-the-badge&logo=render&logoColor=white)](https://ccr-game-theory-risk-h5.streamlit.app//)
+[CCR Quant Risk · Streamlit](https://ccr-game-theory-risk-h5.streamlit.app/)
 
 <br/>
 
