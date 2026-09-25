@@ -6,7 +6,8 @@
 
 **Exposure · Probability · Simulation · Strategy · Decision Support**
 
-[![Live Dashboard](https://img.shields.io/badge/🚀_Live_Demo-ccr--game--theory--risk-2563eb?style=for-the-badge)](https://ccr-game-theory-risk-1.onrender.com/)
+[![Live Dashboard](https://img.shields.io/badge/🚀_Launch_Live_Demo-2563eb?style=for-the-badge&logo=render&logoColor=white)](https://ccr-game-theory-risk-h5.streamlit.app//)
+
 [![Python](https://img.shields.io/badge/Python-3.10+-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://python.org)
 [![Streamlit](https://img.shields.io/badge/Streamlit-1.x-FF4B4B?style=for-the-badge&logo=streamlit&logoColor=white)](https://streamlit.io)
 [![FastAPI](https://img.shields.io/badge/FastAPI-Backend-009688?style=for-the-badge&logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com)
