@@ -322,11 +322,11 @@ $$
 Neither player can improve payoff by unilateral deviation:
 
 $$
-U_B(a^{*}, b^{*}) \geq U_B(a, b^{*}) \quad \forall a
+U_B(a^{\ast}, b^{\ast}) \geq U_B(a, b^{\ast}) \quad \forall a
 $$
 
 $$
-U_C(a^{*}, b^{*}) \geq U_C(a^{*}, b) \quad \forall b
+U_C(a^{\ast}, b^{\ast}) \geq U_C(a^{\ast}, b) \quad \forall b
 $$
 
 ### 10. Value of Perfect Information (VOI)
