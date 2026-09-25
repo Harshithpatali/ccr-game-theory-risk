@@ -76,60 +76,180 @@ BAND_FALLBACK = ["#64748b", "#0ea5e9", "#8b5cf6", "#ec4899", "#14b8a6"]
 st.markdown(
     """
     <style>
-      :root { --ccr-accent: #2563eb; }
-      .block-container { padding-top: 1.4rem; padding-bottom: 2.5rem; max-width: 1550px; }
-
-      /* hero banner */
-      .ccr-hero {
-        background: linear-gradient(120deg, #0f172a 0%, #1e3a8a 58%, #2563eb 100%);
-        border-radius: 16px; padding: 20px 26px; margin-bottom: 18px;
-        box-shadow: 0 10px 26px rgba(15, 23, 42, .18);
+      :root {
+        --ccr-accent: #2563eb;
+        --ccr-accent-2: #06b6d4;
+        --ccr-ink: #0f172a;
       }
-      .ccr-hero h1 { color: #fff; font-size: 1.45rem; margin: 0; font-weight: 700; letter-spacing: -.015em; }
-      .ccr-hero p  { color: #c7d2fe; margin: 6px 0 0; font-size: .86rem; }
 
-      /* KPI cards */
+      @keyframes ccrDrift {
+        0%   { transform: translate(0, 0) scale(1); }
+        50%  { transform: translate(-2%, 2%) scale(1.06); }
+        100% { transform: translate(0, 0) scale(1); }
+      }
+      @keyframes ccrShimmer {
+        0%   { background-position: -400px 0; }
+        100% { background-position: 400px 0; }
+      }
+      @keyframes ccrFadeUp {
+        from { opacity: 0; transform: translateY(6px); }
+        to   { opacity: 1; transform: translateY(0); }
+      }
+      @keyframes ccrPulseRing {
+        0%   { box-shadow: 0 0 0 0 rgba(220, 38, 38, .35); }
+        70%  { box-shadow: 0 0 0 8px rgba(220, 38, 38, 0); }
+        100% { box-shadow: 0 0 0 0 rgba(220, 38, 38, 0); }
+      }
+
+      /* ambient CGI-style glow orbs behind the whole app */
+      [data-testid="stAppViewContainer"] {
+        background:
+          radial-gradient(600px circle at 8% -6%, rgba(37, 99, 235, .10), transparent 55%),
+          radial-gradient(600px circle at 96% 8%, rgba(6, 182, 212, .10), transparent 50%),
+          radial-gradient(900px circle at 50% 115%, rgba(139, 92, 246, .07), transparent 55%),
+          #f8fafc;
+      }
+
+      .block-container { padding-top: 1.3rem; padding-bottom: 2.5rem; max-width: 1550px; animation: ccrFadeUp .45s ease both; }
+
+      /* hero banner — animated aurora gradient + faint grid + shimmer sweep */
+      .ccr-hero {
+        position: relative; overflow: hidden;
+        background: linear-gradient(120deg, #0b1224 0%, #16234f 32%, #1e3a8a 62%, #2563eb 100%);
+        background-size: 220% 220%;
+        animation: ccrAurora 14s ease-in-out infinite;
+        border-radius: 18px; padding: 26px 30px; margin-bottom: 20px;
+        box-shadow: 0 18px 40px rgba(15, 23, 42, .28), inset 0 1px 0 rgba(255,255,255,.06);
+        border: 1px solid rgba(148, 163, 253, .18);
+      }
+      @keyframes ccrAurora {
+        0%   { background-position: 0% 50%; }
+        50%  { background-position: 100% 50%; }
+        100% { background-position: 0% 50%; }
+      }
+      .ccr-hero::before {
+        content: ""; position: absolute; inset: -40%;
+        background:
+          radial-gradient(220px circle at 20% 30%, rgba(96, 165, 250, .35), transparent 60%),
+          radial-gradient(260px circle at 85% 70%, rgba(56, 189, 248, .28), transparent 60%);
+        animation: ccrDrift 9s ease-in-out infinite;
+        pointer-events: none;
+      }
+      .ccr-hero::after {
+        content: ""; position: absolute; inset: 0;
+        background: linear-gradient(115deg, transparent 40%, rgba(255,255,255,.10) 50%, transparent 60%);
+        background-size: 300% 100%;
+        animation: ccrShimmer 6s linear infinite;
+        pointer-events: none;
+      }
+      .ccr-hero h1 {
+        position: relative; color: #fff; font-size: 1.55rem; margin: 0;
+        font-weight: 800; letter-spacing: -.02em; text-shadow: 0 2px 18px rgba(37,99,235,.5);
+      }
+      .ccr-hero p  { position: relative; color: #c7d2fe; margin: 7px 0 0; font-size: .87rem; }
+      .ccr-hero .ccr-badge {
+        position: relative; display: inline-block; margin-top: 12px;
+        background: rgba(255,255,255,.10); border: 1px solid rgba(255,255,255,.22);
+        color: #e0e7ff; font-size: .72rem; font-weight: 600; letter-spacing: .04em;
+        padding: 4px 10px; border-radius: 999px; backdrop-filter: blur(4px);
+      }
+
+      /* KPI cards — glass, lift-on-hover, gradient top edge */
       div[data-testid="stMetric"] {
-        background: #ffffff;
+        position: relative; background: rgba(255,255,255,.85);
+        backdrop-filter: blur(6px);
         border: 1px solid #e2e8f0;
-        border-radius: 12px;
-        padding: 14px 16px 12px;
-        box-shadow: 0 1px 2px rgba(15, 23, 42, .05);
+        border-radius: 14px;
+        padding: 16px 18px 14px;
+        box-shadow: 0 1px 2px rgba(15, 23, 42, .04), 0 10px 22px rgba(15, 23, 42, .03);
+        transition: transform .22s ease, box-shadow .22s ease, border-color .22s ease;
+        overflow: hidden;
+        animation: ccrFadeUp .5s ease both;
+      }
+      div[data-testid="stMetric"]::before {
+        content: ""; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+        background: linear-gradient(90deg, var(--ccr-accent), var(--ccr-accent-2));
+        opacity: .85;
+      }
+      div[data-testid="stMetric"]:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 4px 10px rgba(37,99,235,.08), 0 18px 30px rgba(37,99,235,.12);
+        border-color: #c7d2fe;
       }
       div[data-testid="stMetricLabel"] p {
-        font-size: .72rem; letter-spacing: .05em; text-transform: uppercase;
+        font-size: .72rem; letter-spacing: .06em; text-transform: uppercase;
         color: #64748b; font-weight: 700;
       }
-      div[data-testid="stMetricValue"] { font-size: 1.45rem; font-weight: 700; color: #0f172a; }
+      div[data-testid="stMetricValue"] {
+        font-size: 1.5rem; font-weight: 800; color: var(--ccr-ink);
+        background: linear-gradient(90deg, #0f172a, #1e3a8a);
+        -webkit-background-clip: text; background-clip: text;
+      }
 
-      /* tabs */
-      .stTabs [data-baseweb="tab-list"] { gap: 6px; border-bottom: 1px solid #e2e8f0; }
-      .stTabs [data-baseweb="tab"] { height: 44px; padding: 0 16px; font-weight: 600; }
-      .stTabs [aria-selected="true"] { color: var(--ccr-accent) !important; }
+      /* tabs — animated underline glow */
+      .stTabs [data-baseweb="tab-list"] { gap: 4px; border-bottom: 1px solid #e2e8f0; }
+      .stTabs [data-baseweb="tab"] {
+        height: 44px; padding: 0 16px; font-weight: 600; border-radius: 10px 10px 0 0;
+        transition: background-color .2s ease, color .2s ease;
+      }
+      .stTabs [data-baseweb="tab"]:hover { background: rgba(37,99,235,.06); }
+      .stTabs [aria-selected="true"] {
+        color: var(--ccr-accent) !important;
+        box-shadow: inset 0 -2.5px 0 var(--ccr-accent);
+      }
 
       /* expanders / tables */
-      div[data-testid="stExpander"] details { border: 1px solid #e2e8f0; border-radius: 10px; }
-      div[data-testid="stDataFrame"] { border-radius: 10px; }
+      div[data-testid="stExpander"] details {
+        border: 1px solid #e2e8f0; border-radius: 12px; transition: box-shadow .2s ease;
+      }
+      div[data-testid="stExpander"] details:hover { box-shadow: 0 6px 16px rgba(15,23,42,.05); }
+      div[data-testid="stDataFrame"] { border-radius: 12px; overflow: hidden; }
       h3 { letter-spacing: -.01em; }
 
-      /* interpretation panel — a soft, readable decision box */
+      /* buttons — subtle glow on primary actions */
+      .stButton > button {
+        border-radius: 10px; font-weight: 600; transition: all .2s ease;
+      }
+      .stButton > button:hover {
+        box-shadow: 0 6px 16px rgba(37,99,235,.18); transform: translateY(-1px);
+      }
+
+      /* interpretation panel — soft glass decision card with accent pulse */
       .ccr-interpretation {
+        position: relative;
         background: linear-gradient(180deg, #f8fafc 0%, #ffffff 100%);
         border: 1px solid #e2e8f0;
         border-left: 4px solid var(--ccr-accent);
-        border-radius: 12px;
-        padding: 16px 20px;
+        border-radius: 14px;
+        padding: 18px 22px;
         margin-bottom: 12px;
+        box-shadow: 0 8px 20px rgba(15, 23, 42, .04);
+        animation: ccrFadeUp .4s ease both;
       }
       .ccr-interpretation h3 {
-        margin: 0 0 8px;
-        font-size: 1.05rem;
-        color: #0f172a;
+        margin: 0 0 8px; font-size: 1.05rem; color: #0f172a;
+        display: flex; align-items: center; gap: 8px;
+      }
+      .ccr-interpretation h3::before {
+        content: ""; width: 8px; height: 8px; border-radius: 50%;
+        background: radial-gradient(circle, var(--ccr-accent-2), var(--ccr-accent));
+        box-shadow: 0 0 0 4px rgba(37,99,235,.12);
+        display: inline-block;
       }
       .ccr-interpretation p, .ccr-interpretation li {
-        font-size: .9rem;
-        color: #334155;
-        line-height: 1.55;
+        font-size: .9rem; color: #334155; line-height: 1.6;
+      }
+
+      /* live-status pill used in the sidebar */
+      .ccr-live-pill {
+        display: inline-flex; align-items: center; gap: 6px;
+        font-size: .74rem; color: #16a34a; font-weight: 700;
+        background: rgba(22,163,74,.08); border: 1px solid rgba(22,163,74,.22);
+        padding: 3px 10px; border-radius: 999px;
+      }
+      .ccr-live-dot {
+        width: 7px; height: 7px; border-radius: 50%; background: #16a34a;
+        animation: ccrPulseRing 2s infinite;
       }
     </style>
     """,
@@ -139,10 +259,26 @@ st.markdown(
 # ============================================================================
 #  Data access
 # ============================================================================
+@st.cache_data(ttl=120, show_spinner="Pulling live risk data…")
 def get(path: str, timeout: int = 90):
+    """Cached GET against the risk backend.
+
+    Cached for 2 minutes so switching tabs, sliders and search boxes never
+    re-hits the API — only a real 'Refresh data' click (or cache expiry)
+    triggers a new network round-trip.
+    """
     r = requests.get(BACKEND + path, timeout=timeout)
     r.raise_for_status()
     return r.json()
+
+
+@st.cache_data(ttl=120, show_spinner=False)
+def _last_refreshed_placeholder() -> str:
+    # Cheap cache-boundary marker so the sidebar can show when data was
+    # actually last pulled (invalidated together with everything else on
+    # "Refresh data").
+    from datetime import datetime
+    return datetime.now().strftime("%H:%M:%S")
 
 
 def style_fig(fig, height: int = 420, showlegend: bool = True):
@@ -253,9 +389,14 @@ def method_note(page_key: str):
 # ============================================================================
 with st.sidebar:
     st.markdown("#### ⚙️ Data")
+    st.markdown(
+        '<span class="ccr-live-pill"><span class="ccr-live-dot"></span> Live · connected</span>',
+        unsafe_allow_html=True,
+    )
     if st.button("🔄 Refresh data", **STRETCH):
         st.cache_data.clear()
         st.rerun()
+    st.caption(f"Last pulled at **{_last_refreshed_placeholder()}** · cached 2 min")
 
 # ============================================================================
 #  Header
@@ -266,6 +407,7 @@ st.markdown(
       <h1>📐 CCR Quantitative Risk &amp; Bayesian Game Theory</h1>
       <p>Layer 1: quantitative results · Layer 2: stakeholder interpretation
       (Finding → Why it matters → Risk implication → Management consideration)</p>
+      <span class="ccr-badge">⚡ Real-time exposure &amp; counterparty intelligence</span>
     </div>
     """,
     unsafe_allow_html=True,
